@@ -1,0 +1,92 @@
+<!-- Settings Tab -->
+<div id="tab-settings" class="tab-pane">
+  <div class="card" style="max-width: 860px; margin: 0 auto;">
+    <div class="card-header">
+      <div>
+        <h3>ตั้งค่าระบบร้านค้าและโลโก้ (Settings)</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">ข้อมูลร้านค้า โลโก้ และพารามิเตอร์การทำงาน</p>
+      </div>
+      <button class="btn-refresh" onclick="loadSettingsData()">รีเฟรชการตั้งค่า</button>
+    </div>
+    <div class="card-body">
+      
+      <!-- Store Logo Section -->
+      <div style="margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color);">
+        <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-primary);">โลโก้ร้านค้า (Store Logo)</h4>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+          รูปโลโก้จะแสดงในแถบ Sidebar ส่วนหัว และใบเสร็จรับเงิน (บันทึกลงในโฟลเดอร์ LongtuaPOS/Store ใน Google Drive)
+        </p>
+
+        <div style="display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap;">
+          <div class="image-preview-container" id="logoPreviewContainer" style="width: 120px; height: 120px; margin: 0;">
+            <div id="logoPlaceholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f8fafc; color: #94a3b8; font-size: 0.8rem; text-align: center; padding: 0.5rem;">
+              ไม่มีโลโก้
+            </div>
+            <img id="logoPreviewImg" src="" alt="Store Logo" style="display: none; width: 100%; height: 100%; object-fit: contain;">
+          </div>
+
+          <div style="flex: 1; min-width: 250px;">
+            <div class="image-dropzone" id="logoDropzone" onclick="document.getElementById('logoFileInput').click()" style="padding: 1.25rem;">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto 0.5rem; color: var(--primary);">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <div style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary);">คลิกเพื่อเลือกไฟล์ หรือลากวางโลโก้ที่นี่</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">รองรับ JPG, PNG, WebP ขนาดไม่เกิน 5 MB (ย่อขนาดอัตโนมัติ)</div>
+            </div>
+            <input type="file" id="logoFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handleLogoFileSelect(event)">
+            
+            <div class="progress-bar-container" id="logoProgressBar">
+              <div class="progress-bar-fill" id="logoProgressFill"></div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+              <button class="btn-primary" id="btnUploadLogo" onclick="uploadStoreLogoAction()" style="display: none; padding: 0.4rem 0.85rem; font-size: 0.8rem;">
+                บันทึกโลโก้
+              </button>
+              <button class="btn-action-sm btn-action-danger" id="btnRemoveLogo" onclick="removeStoreLogoAction()" style="display: none;">
+                ลบโลโก้ร้าน
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shop Information Form -->
+      <form id="storeSettingsForm" onsubmit="saveStoreSettings(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">ชื่อร้านค้า (Shop Name)</label>
+            <input type="text" id="settingShopName" name="shop_name" value="LongtuaPOS Cafe & Store" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">สกุลเงิน (Currency)</label>
+            <input type="text" id="settingCurrency" name="currency_symbol" value="฿" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">เบอร์โทรศัพท์ (Phone)</label>
+            <input type="text" id="settingShopPhone" name="shop_phone" value="081-234-5678" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">อัตราภาษีมูลค่าเพิ่ม (%)</label>
+            <input type="text" id="settingTaxRate" name="vat_rate" value="7" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+          <div style="grid-column: span 2;">
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">ข้อความท้ายใบเสร็จ (Receipt Footer)</label>
+            <input type="text" id="settingReceiptFooter" name="receipt_footer" value="ขอบคุณที่ใช้บริการ / Thank you for visiting" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+          <div style="grid-column: span 2;">
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Google Sheets Database ID</label>
+            <input type="text" readonly value="19es18yyzrKniZpHw_zevUCBbfuGqgl69vger2SQQzEQ" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.85rem; background:#f1f5f9; color:#475569; font-family:monospace;">
+          </div>
+        </div>
+        
+        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end;">
+          <button type="submit" class="btn-primary" style="padding: 0.6rem 1.5rem;">
+            บันทึกการตั้งค่าร้านค้า
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

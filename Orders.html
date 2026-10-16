@@ -1,0 +1,37 @@
+<!-- Orders Tab -->
+<div id="tab-orders" class="tab-pane">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3>รายการคำสั่งซื้อทั้งหมด (Orders Sheet)</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">เชื่อมโยงกับชีต Orders และ OrderItems</p>
+      </div>
+      <button class="btn-refresh" onclick="loadOrdersData()">
+        <span>โหลดข้อมูลคำสั่งซื้อ</span>
+      </button>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ลำดับ/ID</th>
+              <th>วันที่ทำรายการ</th>
+              <th>ลูกค้า</th>
+              <th>ช่องทางชำระ</th>
+              <th>ยอดสุทธิ</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="ordersFullTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">
+                กดปุ่ม "โหลดข้อมูลคำสั่งซื้อ" เพื่อดึงข้อมูลจริงจาก Google Sheets
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

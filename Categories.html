@@ -1,0 +1,40 @@
+<!-- Categories Tab -->
+<div id="tab-categories" class="tab-pane">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <h3>หมวดหมู่สินค้า (Categories Sheet)</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">จัดการและตรวจสอบหมวดหมู่สินค้า</p>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="btn-primary" onclick="openCategoryQuickModal()">
+          <span>+ เพิ่มหมวดหมู่ใหม่</span>
+        </button>
+        <button class="btn-refresh" onclick="loadCategoriesData()">
+          <span>โหลดหมวดหมู่</span>
+        </button>
+      </div>
+    </div>
+    <div class="card-body" style="padding: 0;">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>ชื่อหมวดหมู่</th>
+              <th>คำอธิบาย</th>
+              <th>สถานะ</th>
+            </tr>
+          </thead>
+          <tbody id="categoriesFullTableBody">
+            <tr>
+              <td colspan="4" style="text-align: center; padding: 2rem; color: #94a3b8;">
+                กดปุ่ม "โหลดหมวดหมู่" เพื่อดึงข้อมูลจริงจาก Google Sheets
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

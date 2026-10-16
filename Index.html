@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= appName ?> - Admin Dashboard</title>
+    <!-- Include Global Styles -->
+    <?!= include('Styles'); ?>
+  </head>
+  <body>
+    <?
+      // สร้าง context สำหรับส่งต่อไปยัง partial templates
+      const ctx = {
+        currentUser: currentUser,
+        appName: appName,
+        appVersion: appVersion,
+        storeSettings: storeSettings,
+        storeLogoUrl: storeLogoUrl
+      };
+    ?>
+
+    <div class="app-container">
+      <!-- Sidebar Navigation -->
+      <?!= include('Sidebar', ctx); ?>
+
+      <!-- Main Content Area -->
+      <div class="main-wrapper">
+        <!-- Top Header Navigation -->
+        <?!= include('Header', ctx); ?>
+
+        <!-- Views / Tab Panes -->
+        <main class="content-area">
+          <!-- 1. Dashboard View -->
+          <?!= include('Dashboard', ctx); ?>
+
+          <!-- 2. POS View -->
+          <?!= include('POS', ctx); ?>
+
+          <!-- 3. Orders View -->
+          <?!= include('Orders', ctx); ?>
+
+          <!-- 4. Products View -->
+          <?!= include('Products', ctx); ?>
+
+          <!-- 5. Categories View -->
+          <?!= include('Categories', ctx); ?>
+
+          <!-- 6. Expenses View -->
+          <?!= include('Expenses', ctx); ?>
+
+          <!-- 7. Database 9 Sheets Inspector View -->
+          <div id="tab-sheets" class="tab-pane">
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <h3>โครงสร้างและสถานะชีตฐานข้อมูลทั้ง 9 ชีต</h3>
+                  <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.2rem;">คลิกที่การ์ดชีตเพื่อเปิดดูข้อมูลและคอลัมน์แบบสดจาก Google Sheets</p>
+                </div>
+                <button class="btn-refresh" onclick="refreshDashboard()">รีเฟรชสถานะชีต</button>
+              </div>
+              <div class="card-body">
+                <div class="sheets-overview-grid" id="sheetsInspectorGrid">
+                  <!-- Auto-synced with sheetsOverviewContainer -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8. Settings View -->
+          <?!= include('Settings', ctx); ?>
+        </main>
+      </div>
+    </div>
+
+    <!-- Reusable Modal -->
+    <?!= include('Modal', ctx); ?>
+
+    <!-- Client-side Scripts -->
+    <?!= include('Scripts', ctx); ?>
+
+    <script>
+      // ซิงค์การแสดงผลของ tab-sheets ให้เหมือนกับ dashboard
+      const origRender = renderSheetsOverview;
+      renderSheetsOverview = function(sheetsSummary) {
+        origRender(sheetsSummary);
+        const inspectorGrid = document.getElementById('sheetsInspectorGrid');
+        const container = document.getElementById('sheetsOverviewContainer');
+        if (inspectorGrid && container) {
+          inspectorGrid.innerHTML = container.innerHTML;
+        }
+      };
+    </script>
+  </body>
+</html>

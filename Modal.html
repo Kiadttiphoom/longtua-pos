@@ -1,0 +1,175 @@
+<!-- Product Add/Edit Modal -->
+<div id="productModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:105; align-items:center; justify-content:center;">
+  <div style="background:white; width:92%; max-width:680px; max-height:90vh; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); display:flex; flex-direction:column; overflow:hidden;">
+    
+    <!-- Modal Header -->
+    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+      <h3 id="productModalTitle" style="font-size:1.1rem; font-weight:600; color:var(--text-primary); margin:0;">เพิ่มสินค้าใหม่</h3>
+      <button type="button" id="btnCloseProductX" onclick="closeProductModal()" style="background:none; border:none; cursor:pointer; font-size:1.5rem; color:var(--text-secondary); line-height:1;">&times;</button>
+    </div>
+
+    <!-- Modal Form Body -->
+    <form id="productForm" onsubmit="handleProductFormSubmit(event)" style="display:flex; flex-direction:column; flex:1; overflow-y:auto;">
+      <div style="padding:1.5rem; display:flex; flex-direction:column; gap:1.25rem;">
+        <input type="hidden" id="prodFormId">
+        <input type="hidden" id="prodFormImageAction" value="keep">
+        <input type="hidden" id="prodFormExistingImageId" value="">
+
+        <!-- Image Upload & Preview Section -->
+        <div>
+          <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.5rem; color:var(--text-primary);">รูปภาพสินค้า (Google Drive)</label>
+          <div style="display:flex; gap:1rem; align-items:stretch;">
+            
+            <!-- Left: Square Preview Box -->
+            <div style="width:110px; display:flex; flex-direction:column; gap:0.4rem; flex-shrink:0;">
+              <div class="image-preview-container" id="productPreviewContainer" style="margin:0; width:110px; height:110px; border-radius:var(--radius-md); border:1px solid var(--border-color); background:#f8fafc; overflow:hidden; flex-shrink:0;">
+                <div id="productImgPlaceholder" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:0.75rem; text-align:center; padding:0.5rem;">
+                  ไม่มีรูปภาพ
+                </div>
+                <img id="productPreviewImg" src="" alt="Product Preview" style="display:none; width:100%; height:100%; object-fit:cover;">
+              </div>
+              <button type="button" class="btn-action-sm btn-action-danger" id="btnRemoveProductImage" onclick="removeProductImageAction()" style="display:none; width:100%; padding:0.25rem 0.5rem; font-size:0.72rem;">
+                นำรูปออก
+              </button>
+            </div>
+
+            <!-- Right: Dropzone Box (Aligned to same height 110px) -->
+            <div style="flex:1; min-width:0; display:flex; flex-direction:column;">
+              <div class="image-dropzone" id="productDropzone" onclick="document.getElementById('productFileInput').click()" style="height:110px; box-sizing:border-box; padding:0.75rem 1rem; display:flex; flex-direction:column; align-items:center; justify-content:center; border:2px dashed #cbd5e1; border-radius:var(--radius-md); background:#f8fafc; cursor:pointer; margin:0;">
+                <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom:0.35rem; color:var(--primary);">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <div style="font-size:0.85rem; font-weight:500; color:var(--text-primary); line-height:1.2;">เลือกรูปภาพ หรือลากวางที่นี่</div>
+                <div style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.25rem;">บีบอัดอัตโนมัติ ≤ 800×800px (WebP/JPEG)</div>
+              </div>
+              <input type="file" id="productFileInput" accept="image/jpeg,image/png,image/webp" style="display:none;" onchange="handleProductFileSelect(event)">
+              
+              <div class="progress-bar-container" id="productProgressBar">
+                <div class="progress-bar-fill" id="productProgressFill"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Form Fields Grid -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div style="grid-column: span 2;">
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">ชื่อสินค้า <span style="color:#ef4444;">*</span></label>
+            <input type="text" id="prodFormName" required placeholder="เช่น อเมริกาโน่เย็น, ชาเขียวมัทฉะ" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+              <label style="font-size:0.85rem; font-weight:500; color:var(--text-secondary); margin:0;">รหัสสินค้า (SKU/Barcode)</label>
+              <button type="button" onclick="generateAutoSku()" style="background:none; border:none; color:var(--primary); font-size:0.75rem; cursor:pointer; font-weight:500;">⚡ สุ่มรหัสใหม่</button>
+            </div>
+            <input type="text" id="prodFormSku" readonly placeholder="PRD-0001 (สร้างอัตโนมัติ)" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem; background:#f1f5f9; color:#334155; cursor:not-allowed;">
+          </div>
+
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+              <label style="font-size:0.85rem; font-weight:500; color:var(--text-secondary); margin:0;">หมวดหมู่สินค้า</label>
+              <button type="button" onclick="openCategoryQuickModal()" style="background:none; border:none; color:var(--primary); font-size:0.75rem; cursor:pointer; font-weight:500;">+ เพิ่มหมวดใหม่</button>
+            </div>
+            <select id="prodFormCategory" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem; background:#ffffff; color:var(--text-primary);">
+              <option value="">-- เลือกหมวดหมู่สินค้า --</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">ราคาขาย (฿) <span style="color:#ef4444;">*</span></label>
+            <input type="number" id="prodFormPrice" step="0.25" min="0" required placeholder="0.00" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">ราคาทุน (฿)</label>
+            <input type="number" id="prodFormCost" step="0.25" min="0" placeholder="0.00" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">จำนวนสต็อกคงเหลือ</label>
+            <input type="number" id="prodFormStock" step="1" value="0" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+
+          <div>
+            <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">เตือนเมื่อสต็อกต่ำกว่า</label>
+            <input type="number" id="prodFormMinStock" step="1" value="5" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding:1rem 1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:0.5rem; background:#f8fafc;">
+        <button type="button" id="btnCancelProduct" onclick="closeProductModal()" class="btn-refresh">ยกเลิก</button>
+        <button type="submit" id="btnSubmitProduct" class="btn-primary">บันทึกข้อมูลสินค้า</button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- Reusable General Modal for Inspecting Sheet & Details -->
+<div id="appModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:100; align-items:center; justify-content:center;">
+  <div style="background:white; width:90%; max-width:900px; max-height:85vh; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); display:flex; flex-direction:column; overflow:hidden;">
+    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+      <h3 id="modalTitle" style="font-size:1.1rem; font-weight:600; color:var(--text-primary); flex:1; margin:0;">รายละเอียด</h3>
+      <button onclick="closeModal()" style="background:none; border:none; cursor:pointer; font-size:1.5rem; color:var(--text-secondary); line-height:1;">&times;</button>
+    </div>
+    <div id="modalBody" style="padding:1.5rem; overflow-y:auto; flex:1;">
+      <!-- Dynamic modal content -->
+    </div>
+    <div style="padding:1rem 1.5rem; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end;">
+      <button onclick="closeModal()" class="btn-refresh" style="padding:0.5rem 1.25rem;">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Confirmation Modal (Modern UI) -->
+<div id="confirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.65); backdrop-filter:blur(4px); z-index:110; align-items:center; justify-content:center;">
+  <div style="background:white; width:90%; max-width:420px; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); overflow:hidden; animation:fadeIn 0.2s ease;">
+    <div style="padding:1.5rem 1.5rem 1rem; text-align:center;">
+      <div id="confirmModalIcon" style="width:52px; height:52px; border-radius:50%; background:#fee2e2; color:#ef4444; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem;">
+        <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </div>
+      <h3 id="confirmModalTitle" style="font-size:1.15rem; font-weight:600; color:var(--text-primary); margin-bottom:0.5rem;">ยืนยันการลบข้อมูล</h3>
+      <p id="confirmModalMessage" style="font-size:0.88rem; color:var(--text-secondary); line-height:1.5; margin:0;">คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้? การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+    </div>
+    <div style="padding:1rem 1.5rem; background:#f8fafc; border-top:1px solid var(--border-color); display:flex; justify-content:flex-end; gap:0.6rem;">
+      <button type="button" id="btnCancelConfirm" class="btn-refresh" style="padding:0.5rem 1rem;">ยกเลิก</button>
+      <button type="button" id="btnApproveConfirm" style="padding:0.5rem 1.25rem; border-radius:var(--radius-sm); border:none; background:#ef4444; color:white; font-size:0.88rem; font-weight:500; cursor:pointer; transition:all 0.2s;">
+        ยืนยันการลบ
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Category Modal -->
+<div id="categoryQuickModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.65); backdrop-filter:blur(4px); z-index:115; align-items:center; justify-content:center;">
+  <div style="background:white; width:90%; max-width:440px; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); overflow:hidden;">
+    <div style="padding:1.25rem 1.5rem; border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="font-size:1.1rem; font-weight:600; color:var(--text-primary); margin:0;">เพิ่มหมวดหมู่สินค้า</h3>
+      <button type="button" id="btnCloseCatX" onclick="closeCategoryQuickModal()" style="background:none; border:none; cursor:pointer; font-size:1.5rem; color:var(--text-secondary); line-height:1;">&times;</button>
+    </div>
+    <form id="categoryQuickForm" onsubmit="handleCategoryQuickSubmit(event)" style="padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
+      <div>
+        <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">ชื่อหมวดหมู่ <span style="color:#ef4444;">*</span></label>
+        <input type="text" id="catQuickName" required placeholder="เช่น เครื่องดื่ม, กาแฟ, เบเกอรี่" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+      </div>
+      <div>
+        <label style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.35rem; color:var(--text-secondary);">คำอธิบาย (ถ้ามี)</label>
+        <input type="text" id="catQuickDesc" placeholder="คำอธิบายสั้นๆ" style="width:100%; padding:0.6rem; border:1px solid var(--border-color); border-radius:var(--radius-sm); font-size:0.9rem;">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
+        <button type="button" id="btnCancelQuickCat" onclick="closeCategoryQuickModal()" class="btn-refresh">ยกเลิก</button>
+        <button type="submit" id="btnSubmitQuickCat" class="btn-primary">บันทึกหมวดหมู่</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>

@@ -1,0 +1,124 @@
+<!-- Dashboard Tab Content -->
+<div id="tab-dashboard" class="tab-pane active">
+  
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+    <div class="stat-card sales">
+      <div class="stat-header">
+        <span class="stat-title">ยอดขายทั้งหมด (Total Sales)</span>
+        <div class="stat-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-value" id="statTotalSales">฿0.00</div>
+      <div class="stat-meta">
+        <span>วันนี้: <strong id="statTodaySales">฿0.00</strong></span>
+      </div>
+    </div>
+
+    <div class="stat-card profit">
+      <div class="stat-header">
+        <span class="stat-title">กำไรสุทธิ (Net Profit)</span>
+        <div class="stat-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-value" id="statNetProfit">฿0.00</div>
+      <div class="stat-meta">
+        <span>ยอดขายหักค่าใช้จ่าย</span>
+      </div>
+    </div>
+
+    <div class="stat-card expenses">
+      <div class="stat-header">
+        <span class="stat-title">รายจ่ายรวม (Total Expenses)</span>
+        <div class="stat-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-value" id="statTotalExpenses">฿0.00</div>
+      <div class="stat-meta">
+        <span id="statExpenseCount">บันทึกรายจ่าย</span>
+      </div>
+    </div>
+
+    <div class="stat-card orders">
+      <div class="stat-header">
+        <span class="stat-title">จำนวนบิลขาย (Orders)</span>
+        <div class="stat-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-value" id="statTotalOrders">0</div>
+      <div class="stat-meta">
+        <span id="statProductsMeta">0 รายการสินค้าในระบบ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Recent Orders & Stock Alert -->
+  <div class="grid-2-cols">
+    <!-- Recent Orders -->
+    <div class="card">
+      <div class="card-header">
+        <h3>รายการออเดอร์ล่าสุด (Recent Orders)</h3>
+        <button class="btn-refresh" onclick="switchTab('tab-orders')">ดูทั้งหมด</button>
+      </div>
+      <div class="card-body" style="padding: 0;">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>เลขที่บิล</th>
+                <th>วันที่/เวลา</th>
+                <th>ลูกค้า</th>
+                <th>ยอดเงิน</th>
+                <th>สถานะ</th>
+              </tr>
+            </thead>
+            <tbody id="recentOrdersTableBody">
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem; color: #94a3b8;">กำลังโหลดข้อมูล...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Low Stock Alert -->
+    <div class="card">
+      <div class="card-header">
+        <h3>แจ้งเตือนสต็อกใกล้หมด</h3>
+        <span class="badge-status danger" id="lowStockBadgeCount">0 รายการ</span>
+      </div>
+      <div class="card-body">
+        <div id="lowStockList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <p style="color: #94a3b8; font-size: 0.85rem; text-align: center;">ไม่มีสินค้าสต็อกใกล้หมด</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9 Sheets Live Inspection Overview -->
+  <div class="card">
+    <div class="card-header">
+      <h3>สถานะชีตฐานข้อมูล Google Sheets (9 ชีต)</h3>
+      <span style="font-size: 0.82rem; color: var(--text-secondary);">อ่านข้อมูลจริงจากสเปรดชีต</span>
+    </div>
+    <div class="card-body">
+      <div class="sheets-overview-grid" id="sheetsOverviewContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+</div>

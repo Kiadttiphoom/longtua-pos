@@ -1,0 +1,27 @@
+<header class="top-header">
+  <div class="header-left">
+    <button class="btn-toggle-sidebar" onclick="toggleSidebar()" title="เปิด/ปิด เมนู">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+    <div class="page-title-box">
+      <h2 id="currentPageTitle">ภาพรวมระบบ (Admin Dashboard)</h2>
+      <p id="currentPageSubtitle">ข้อมูลสรุปแบบเรียลไทม์จาก Google Sheets</p>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="badge-sheet-status" id="dbStatusBadge">
+      <span class="status-dot"></span>
+      <span id="dbStatusText">Google Sheets Connected</span>
+    </div>
+
+    <button class="btn-refresh" onclick="refreshDashboard()" title="ดึงข้อมูลล่าสุด">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+      </svg>
+      <span>รีเฟรชข้อมูล</span>
+    </button>
+  </div>
+</header>
