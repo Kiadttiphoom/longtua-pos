@@ -3,6 +3,11 @@
 .clasprc.json
 .clasp*.json
 
+# Allow example configurations
+!.clasp.example.json
+!.clasprc.example.json
+
+
 # Environment
 .env
 .env.*
@@ -18,3 +23,4 @@ Thumbs.db
 
 # Logs
 *.log
+
